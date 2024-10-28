@@ -1,43 +1,65 @@
 from datetime import datetime
+from dateutil.parser import parse
 from calculator import ParkingFeeCalculator
 
 
-PFC = ParkingFeeCalculator()
-
-
 class TestParkingFeeCalculator:
+    pfc: ParkingFeeCalculator
+    start_time: datetime
+    end_time: datetime
+    actual_fee: int
+
+    def setup_method(self):
+        self.pfc = ParkingFeeCalculator()
+
+    def given_parking_start_at(self, start: str):
+        self.start_time = parse(start)
+
+    def given_parking_end_at(self, end: str):
+        self.end_time = parse(end)
+
+    def calculate(self):
+        self.actual_fee = self.pfc.calculate(self.start_time, self.end_time)
+
+    def should_pay(self, expected: int):
+        assert self.actual_fee == expected
 
     def test_15_mins_free(self):
-        start = datetime(2024, 1, 1, 0, 0, 0)
-        end = datetime(2024, 1, 1, 0, 14, 59)
+        self.given_parking_start_at("2024-1-1T0:0:0")
+        self.given_parking_end_at("2024-1-1T0:15:00")
 
-        actual = PFC.calculate(start, end)
+        self.calculate()
 
-        assert actual == 0
+        self.should_pay(0)
 
     def test_over_15min_NOT_free(self):
-        start = datetime(2024, 1, 1, 0, 0, 0)
-        end = datetime(2024, 1, 1, 0, 15, 1)
+        self.given_parking_start_at("2024-1-1T0:0:0")
+        self.given_parking_end_at("2024-1-1T0:15:01")
 
-        actual = PFC.calculate(start, end)
+        self.calculate()
 
-        assert actual != 0
+        assert self.actual_fee > 0
 
     def test_over_30min__R__pay_60(self):
-        start = datetime(2024, 1, 1, 0, 0, 0)
-        end = datetime(2024, 1, 1, 0, 30, 1)
+        self.given_parking_start_at("2024-1-1T0:0:0")
+        self.given_parking_end_at("2024-1-1T0:30:00")
 
-        actual = PFC.calculate(start, end)
+        self.calculate()
 
-        assert actual == 60
+        self.should_pay(60)
 
     def test_over_60min__R__pay_90(self):
-        start = datetime(2024, 1, 1, 0, 0, 0)
-        end = datetime(2024, 1, 1, 1, 0, 1)
+        self.given_parking_start_at("2024-1-1T0:0:0")
+        self.given_parking_end_at("2024-1-1T01:00:00")
 
-        actual = PFC.calculate(start, end)
+        self.calculate()
 
-        assert actual == 90
+        self.should_pay(90)
 
     def test_over_150min__R__pay_150(self):
-        pass
+        self.given_parking_start_at("2024-1-1T0:0:0")
+        self.given_parking_end_at("2024-1-1T02:30:00")
+
+        self.calculate()
+
+        self.should_pay(150)
