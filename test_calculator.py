@@ -25,40 +25,40 @@ class TestParkingFeeCalculator:
         assert self.actual_fee == expected
 
     def test_15_mins_free(self):
-        self.given_parking_start_at("2024-1-1T0:0:0")
-        self.given_parking_end_at("2024-1-1T0:15:00")
+        self.given_parking_start_at("2024-1-2T0:0:0")
+        self.given_parking_end_at("2024-1-2T0:15:00")
 
         self.calculate()
 
         self.should_pay(0)
 
     def test_over_15min_NOT_free(self):
-        self.given_parking_start_at("2024-1-1T0:0:0")
-        self.given_parking_end_at("2024-1-1T0:15:01")
+        self.given_parking_start_at("2024-1-2T0:0:0")
+        self.given_parking_end_at("2024-1-2T0:15:01")
 
         self.calculate()
 
         assert self.actual_fee > 0
 
     def test_over_30min__R__pay_60(self):
-        self.given_parking_start_at("2024-1-1T0:0:0")
-        self.given_parking_end_at("2024-1-1T0:30:00")
+        self.given_parking_start_at("2024-1-2T0:0:0")
+        self.given_parking_end_at("2024-1-2T0:30:00")
 
         self.calculate()
 
         self.should_pay(60)
 
     def test_over_60min__R__pay_90(self):
-        self.given_parking_start_at("2024-1-1T0:0:0")
-        self.given_parking_end_at("2024-1-1T01:00:00")
+        self.given_parking_start_at("2024-1-2T0:0:0")
+        self.given_parking_end_at("2024-1-2T01:00:00")
 
         self.calculate()
 
         self.should_pay(90)
 
     def test_over_150min__R__pay_150(self):
-        self.given_parking_start_at("2024-1-1T0:0:0")
-        self.given_parking_end_at("2024-1-1T02:30:00")
+        self.given_parking_start_at("2024-1-2T0:0:0")
+        self.given_parking_end_at("2024-1-2T02:30:00")
 
         self.calculate()
 

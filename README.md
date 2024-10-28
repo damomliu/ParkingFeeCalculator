@@ -5,3 +5,4 @@
 1. 用足夠簡單的 example, 制定介面 _`calculate(start, end)`_
 2. 增加 test, 並發現 main 規律。適時重構 main。
 3. 隱藏技術細節、暴露商業應用場景
+   - 增加 feat 前，不要讓現有測項抵觸新增功能
