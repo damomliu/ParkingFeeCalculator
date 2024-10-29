@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import math
 
 
 class ParkingFeeCalculator:
@@ -14,6 +15,13 @@ class ParkingFeeCalculator:
         例假日與國定假日
             每小時 100 元 (以半小時計)
             當日上限 2400 元 (隔日另計)
+
+        (4. 重新理解需求)
+        [0, 15] mins -> 0   (special case)
+        (15, 30] -> 30
+        (30, 60) -> 60
+        (60, 90] -> 120
+        (120, 150] -> 150
     """
     def calculate(self, start: datetime, end: datetime):
         delta = end - start
@@ -26,6 +34,6 @@ class ParkingFeeCalculator:
             return min(fee, 150)
 
     def _get_regular_fee(self, delta):
-        periods = int(delta / timedelta(minutes=30))
-        fee = (periods + 1) * 30
+        periods = math.ceil(delta / timedelta(minutes=30))
+        fee = periods * 30
         return fee
